@@ -1,0 +1,8 @@
+using DataFlowRunner.DataFlowExecutionEvents.Abstractions;
+
+namespace DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Abstractions;
+
+internal interface IWolverineExecutionCommandMapper
+{
+	IWolverineExecutionCommand ToWolverineCommand(IExecutionCommand command);
+}

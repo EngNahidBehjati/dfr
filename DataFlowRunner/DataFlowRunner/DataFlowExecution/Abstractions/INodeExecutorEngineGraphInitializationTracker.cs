@@ -1,0 +1,10 @@
+﻿using DataFlowRunner.DataFlowExecution.Models;
+
+namespace DataFlowRunner.DataFlowExecution.Abstractions;
+
+internal interface INodeExecutorEngineGraphInitializationTracker
+{
+	void TrackDataFlowInitialization(DataFlowExecutionId dataFlowExecutionId);
+	void UntrackDataFlowInitialization(DataFlowExecutionId dataFlowExecutionId);
+	bool IsDataFlowInitialized(DataFlowExecutionId dataFlowExecutionId);
+}

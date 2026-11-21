@@ -1,0 +1,22 @@
+using DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Abstractions;
+using DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Messages.Reports;
+using DataFlowRunner.DataFlowExecutionEvents.ExecutionReports;
+using Riok.Mapperly.Abstractions;
+
+namespace DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Mappers;
+
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
+internal sealed partial class WolverineExecutionReportMapper : IWolverineExecutionReportMapper
+{
+	public partial DataFlowExecutionInitializedReport ToReport(
+		DataFlowExecutionInitializedWolverineReport wolverineReport);
+
+	public partial GraphInitializationNotRequestedReport ToReport(
+		GraphInitializationNotRequestedWolverineReport wolverineReport);
+
+	public partial NodeExecutionSucceededReport ToReport(NodeExecutionSucceededWolverineReport wolverineReport);
+
+	public partial NodeExecutionFailedReport ToReport(NodeExecutionFailedWolverineReport wolverineReport);
+
+	public partial NodeExecutionCanceledReport ToReport(NodeExecutionCanceledWolverineReport wolverineReport);
+}

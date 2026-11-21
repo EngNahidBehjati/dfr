@@ -1,0 +1,18 @@
+﻿{
+  ResponseNodeConfigs: [
+    {
+      NodeId: Guid_1,
+      Version: 98765,
+      Config:
+{
+"$type": "MicroService.DIP.ScenarioDesignerContract.DataContracts.PluginCommand, ETLEngineContract",
+"PluginTitle": "اجرای کد دستوری SQL",
+"PluginLabel": "اجرای کد دستوری SQL",
+"PluginId": "20e64905-49e1-11f0-b432-08002744de90",
+"Content" : {
+"variable" : "4"
+}
+}
+    }
+  ]
+}

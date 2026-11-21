@@ -1,0 +1,56 @@
+{
+  "DataFlowRunner": {
+    "DataFlowAuthorization": {
+      "DataFlowExecutionIdNotFoundInRoute": "شناسه اجرای جریان داده در آدرس درخواست یافت نشد.",
+      "DataFlowExecutionNotFoundOrAccessDenied": "اجرای جریان داده با شناسه {0} وجود ندارد یا به آن دسترسی ندارید.",
+      "DataFlowExecutionAuthorizationFailed": "احراز هویت اجرای جریان داده با شناسه {0} با خطا مواجه شد. خطای پیش آمده: {1}",
+      "AuthenticatedUserRetrievalFailed": "گرفتن اطلاعات کاربر با خطا مواجه شد."
+    },
+    "DynamicParameters": {
+      "DynamicParametersNotSet": "متغیرهای اجرای جریان داده با شناسه {0} تنظیم نشده‌اند.",
+      "DynamicParametersNotFilled": "متغیرهای {0} تنظیم نشده‌اند.",
+      "RequiredDynamicParameterValueIsNull": "مقدار متغیرهای اجباری {0} نمی‌تواند تهی باشد."
+    },
+    "TableQuery": {
+      "TableQueryExecutionFailed": "در واکشی داده خطایی رخ داده است. خطای پیش آمده: {0}",
+      "RowsNotProvided": "خروجی واکشی داده هیچ سطری ندارد.",
+      "RowCountNotProvided": "تعداد سطرها داده نشده‌است.",
+      "NodeExecutionStateNotSucceeded": "امکان واکشی داده برای پلاگین مورد نظر وجود ندارد. پلاگین باید قبلا اجرا شده‌باشد."
+    },
+    "NodeExecutionStates": {
+      "NodeErrorMessageNotFound": "پیام خطا برای پلاگین مورد نظر یافت نشد.",
+      "NodeExecutionStateTransitionNotAllowed": "تغییر وضعیت پلاگین از {0} به {1} امکان‌پذیر نیست.",
+      "NodeExecutionStartTimeNotSet": "زمان شروع اجرا برای پلاگین مورد نظر تنظیم نشده است."
+    },
+    "GraphCore": {
+      "DuplicateNode": "پلاگین با شناسه {0} از قبل در جریان داده وجود دارد.",
+      "DuplicateEdge": "یال با شناسه {0} از قبل در جریان داده وجود دارد.",
+      "NodeNotFound": "پلاگین موردنظر در جریان داده یافت نشد.",
+      "EdgeNotFound": "یال موردنظر در جریان داده یافت نشد."
+    },
+    "DataFlowExecution": {
+      "DataFlowNotExecutable": "جریان داده قابل اجرا نیست.",
+      "DataFlowExecutionNotFound": "جریان داده موردنظر یافت نشد.",
+      "ProvidedVersionIsOutdated": "نسخه‌ای که برای اجرا داده شده‌است، قدیمی است.",
+      "WaitForVersionTimeout": "نسخه مورد نظر جریان داده از سرویس dfb دریافت نشد. لطفا دوباره اجرا کنید.",
+      "ExecutionSourceIsNotValid": "دلیل اجرا به درستی وارد نشده است.",
+      "RetryExecutionFailed": "اجرای مجدد با خطا مواجه شد.",
+      "RetryExecutionTimedOut": "اجرای مجدد در زمان مقرر شروع نشد."
+    },
+    "DataFlowExecutionEvents": {
+      "ExecutorReset" : "به دلیل خطا در ارتباط با مجری، تمام پلاگین ها نامعتبر می‌شوند."
+    },
+    "DataFlowNodeConfigs": {
+      "GetPluginConfigsFail" : "خطا در گرفتن تنظیمات پلاگین ها"
+    },
+    "DataFlowSnapShot": {
+      "GetTopologyFail" : "خطا در گرفتن جریان داده"
+    },
+    "Common": {
+      "UnknownError": "خطای ناشناخته",
+      "Forbidden": "شما مجاز به انجام این عملیات نیستید.",
+      "DataFlowBuilderError" : "خطا در سرویس DFB:",
+      "DefaultError" :"خطا در سرویس اجرا"
+    }
+  }
+}

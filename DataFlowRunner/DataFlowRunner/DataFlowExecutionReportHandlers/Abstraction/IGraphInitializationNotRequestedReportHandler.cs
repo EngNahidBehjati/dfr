@@ -1,0 +1,8 @@
+using DataFlowRunner.DataFlowExecutionEvents.ExecutionReports;
+
+namespace DataFlowRunner.DataFlowExecutionReportHandlers.Abstraction;
+
+public interface IGraphInitializationNotRequestedReportHandler
+{
+	Task HandleAsync(GraphInitializationNotRequestedReport report, CancellationToken cancellationToken);
+}

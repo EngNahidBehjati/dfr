@@ -1,0 +1,3 @@
+namespace DataFlowRunner.NodeExecutionStates.DataTransferObjects;
+
+public sealed record DataFlowNodeExecutionStatesDto(List<NodeExecutionStateByIdDto> NodeExecutionStates);

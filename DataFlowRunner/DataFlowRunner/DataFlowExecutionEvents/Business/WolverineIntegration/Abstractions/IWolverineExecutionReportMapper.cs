@@ -1,0 +1,17 @@
+using DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Messages.Reports;
+using DataFlowRunner.DataFlowExecutionEvents.ExecutionReports;
+
+namespace DataFlowRunner.DataFlowExecutionEvents.Business.WolverineIntegration.Abstractions;
+
+public interface IWolverineExecutionReportMapper
+{
+	DataFlowExecutionInitializedReport ToReport(DataFlowExecutionInitializedWolverineReport wolverineReport);
+
+	GraphInitializationNotRequestedReport ToReport(GraphInitializationNotRequestedWolverineReport wolverineReport);
+
+	NodeExecutionSucceededReport ToReport(NodeExecutionSucceededWolverineReport wolverineReport);
+
+	NodeExecutionFailedReport ToReport(NodeExecutionFailedWolverineReport wolverineReport);
+
+	NodeExecutionCanceledReport ToReport(NodeExecutionCanceledWolverineReport wolverineReport);
+}

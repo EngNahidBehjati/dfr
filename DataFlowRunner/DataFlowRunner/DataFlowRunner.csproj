@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+    <PropertyGroup>
+        <CollectCoverage>true</CollectCoverage>
+        <ExcludeByFile>**/SwaggerServiceCollectionExtensions.cs</ExcludeByFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="./**/*.dictsource.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Link>LanguageDictionary\default\%(Filename)%(Extension)</Link>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="Common\StronglyTypedIdTemplates\nullablestring.typedid" />
+        <AdditionalFiles Include="Common\StronglyTypedIdTemplates\nullablestring.typedid" />
+    </ItemGroup>
+    
+</Project>

@@ -1,0 +1,8 @@
+﻿using DataFlowRunner.DataFlowExecutionEvents.ExecutionReports;
+
+namespace DataFlowRunner.DataFlowExecutionReportHandlers.Abstraction;
+
+public interface IDataFlowExecutionInitializedReportHandler
+{
+	Task HandleAsync(DataFlowExecutionInitializedReport report, CancellationToken cancellationToken);
+}

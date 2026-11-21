@@ -1,0 +1,3 @@
+﻿namespace DataFlowRunner.DataFlowExecution.Abstractions;
+
+internal interface IDataFlowCancellationNodeNextState : IDataFlowRevocationNodeNextState;

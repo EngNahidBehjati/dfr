@@ -1,0 +1,25 @@
+# AI Coding Rules
+
+## Quick Reference
+
+- `.cursor/docs/structure_analysis.md`
+- `.cursor/rules/code-quality.md`
+- `.cursor/rules/code-smells.md`
+- `.cursor/rules/design-patterns.md`
+- `.cursor/rules/design-principles.md`
+- `.cursor/rules/enforcement.md`
+- `.cursor/rules/refactoring-patterns-reference.md`
+- `.cursor/rules/refactoring-techniques.md`
+- `.cursor/rules/testing.md`
+- `.cursor/commands/summary-pr.md`
+
+## Critical Rules (Always Follow)
+
+All rules in the detailed files listed above are critical and must be followed. See the specific rule files for comprehensive guidelines on:
+- Design principles (SOLID, PLK, Composition over Inheritance, KISS, YAGNI) and controller design
+- Code quality standards (error handling, null safety, file organization, async patterns)
+- Code smells to avoid (long methods/classes, too many dependencies, static classes)
+- Testing standards (test maintenance, naming conventions, mocking, assertions)
+- If your changes require modifications to `.cursor/docs/structure_analysis.md`, make the necessary updates there. 
+For the full set of rules, refer to the detailed rule files in `.cursor/rules/`
+

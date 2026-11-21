@@ -1,0 +1,176 @@
+resources:
+  repositories:
+    - repository: Pipelines
+      type: git
+      name: Infrastructure as Code/Mohaymen.IaC.Pipelines
+      ref: refs/heads/master
+    - repository: MultiLingualImageBuilder
+      type: git
+      name: Infrastructure as Code/Mohaymen.IaC.Pipelines.MultiLingualImageBuilder
+      ref: refs/heads/master
+    - repository: LanguageFiles
+      type: git
+      name: Modules/Mohaymen.LanguageDictionary.Translations
+      ref: refs/heads/master
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - release/*
+
+parameters:
+- name: pushFeatureBranchImage
+  displayName: 'Push Docker image on manual run (feature branch registry)'
+  type: boolean
+  default: false
+
+variables:
+  buildPlatform: Any CPU
+  buildConfiguration: Release
+  externalFeedCredentials: "dev-nexus, devpackages-nexus"
+  dockerBuildIsInReleaseMode: true
+  dockerRegistryServiceConnection: "StarRelease-Harbor"
+  rootOutputDirectory: _Output
+  excludeTestAssembliesPattern: "[*.Samples*]*[*.Integration*]*"
+  sonarExcludeTestAssembliesPattern: "**/*.Samples*/**"
+  includeTestAssembliesPattern: '[$(Build.Repository.Name)*]*'
+  scriptRepoLocation: $(Build.Repository.LocalPath)\Mohaymen.IaC.Pipelines
+  versionDirectoryBuildProps: Directory.Build.props
+  PackageManager: 'C:\Tfs Tools\PackageManager\V 7.0.x\PackageManager.exe'
+  SolutionPackageValidationCondition: true
+  DependencyAnalyzer: 'C:\Tfs Tools\DependencyAnalyzer\V 1.0.x\DependencyAnalyzer.exe'
+  sonarProjectKey: $(System.TeamProject).$(Build.Repository.Name)
+  sonarEnabled: true
+  windowsBuildPool: Default
+  solutionDirectory: DataFlowRunner/DataFlowRunner
+  serviceNameInHelmChart: DFR
+  artifactName: MSSE.DFR.Service
+  serviceExecutableDirectoryName: DataFlowRunner
+  imageRepositoryName: DFR
+  featureBranchImageRegistryName: star-dev
+  runTest: true
+  outputWithConfiguration: $(rootOutputDirectory)\$(serviceExecutableDirectoryName)\$(buildConfiguration)
+  dockerRegistryAddress: repo.mohaymen.ir:3060
+
+stages:
+  - template: stages\SetServiceVersion-Remote.yml@Pipelines
+    parameters:
+      artifactName: $(artifactName)
+      PersianVer: true
+
+  - template: stages/GenerateAndScanSBOMDotnet.yml@Pipelines
+    parameters:
+      dependsOn: [ "Create_version" ]
+      solutionDirectory: $(solutionDirectory)
+      cycloneDXVersion: '5.3.1'
+      sbomFormat: 'Json'
+
+  - template: stages/DockerBuildDotnetService.yml@Pipelines
+    parameters:
+      pushFeatureBranchImage: ${{ parameters.pushFeatureBranchImage }}
+      solutionDirectory: $(solutionDirectory)
+      imageRepositoryName: $(imageRepositoryName)
+      serviceExecutableDirectoryName: $(serviceExecutableDirectoryName)
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
+      serviceNameInHelmChart: $(serviceNameInHelmChart)
+      languageServiceName: DFR
+
+  - stage: "Windows_build"
+    displayName: "Windows build"
+    dependsOn: [ "Create_version" ]
+    pool:
+      name: $(windowsBuildPool)
+    jobs:
+      - job: "build_job"
+        displayName: "Application build"
+        variables:
+          TagVersion: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.TagVersion'] ]
+          TagName: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.TagName'] ]
+          TagVersionName: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.TagVersionName'] ]
+          TagVersion_2: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.TagVersion_2'] ]
+          TagVersionNameSource: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.TagVersionNameSource'] ]
+          IsFeature: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.IsFeature'] ]
+          IsRelease: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.IsRelease'] ]
+          CalculatedBranch: $[ stageDependencies.Create_version.create_version_job.outputs['TagScript.CalculatedBranch'] ]
+        workspace:
+          clean: all
+        steps:
+          - task: PowerShell@2
+            displayName: "Set env. vars"
+            inputs:
+              targetType: inline
+              script: |
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.TagName]$(TagName)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.TagVersionName]$(TagVersionName)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.TagVersion_2]$(TagVersion_2)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.IsFeature]$(IsFeature)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.IsRelease]$(IsRelease)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.calculatedBranch]$(calculatedBranch)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.TagVersion]$(TagVersion)")
+                Write-Host ("##vso[task.setvariable variable=LocalEnv.TagVersionNameSource]$(TagVersionNameSource)")
+
+          - checkout: self
+            persistCredentials: true
+            clean: true
+            fetchDepth: 0
+
+          - checkout: Pipelines
+            clean: true
+
+          - template: tasks/nuget/DotnetRestore.yml@Pipelines
+            parameters:
+              projects: $(solutionDirectory)
+              externalFeedCredentials: $(externalFeedCredentials)
+              solutionDirectory: $(solutionDirectory)
+
+          - template: tasks/csharp/ChangeAssemblyVersion.yml@Pipelines
+            parameters:
+              scriptRepoLocation: $(scriptRepoLocation)
+              projectLocation: $(versionDirectoryBuildProps)
+              xmlTagNames: "Project.PropertyGroup.Version|||Project.PropertyGroup.VersionParts_2"
+              xmlElementValues: "$(LocalEnv.TagVersionNameSource)|||$(LocalEnv.TagVersion_2)"
+              solutionDirectory: $(solutionDirectory)
+
+          - template: tasks/nuget/NugetStaticAnalysis.yml@Pipelines
+            parameters:
+              packageManager: $(PackageManager)
+              dependencyAnalyzer: $(DependencyAnalyzer)
+              solutionDirectory: $(solutionDirectory)
+              isRelease: $(LocalEnv.IsRelease)
+
+          - template: tasks/general/sonarQubePrepare.yml@Pipelines
+            parameters:
+              sonarEnabled: eq(variables.sonarEnabled, true)
+              sonarProjectKey: $(sonarProjectKey)
+              sonarExcludeTestAssembliesPattern: $(sonarExcludeTestAssembliesPattern)
+              sonarProjectBaseDir: $(System.DefaultWorkingDirectory)/$(serviceExecutableDirectoryName)
+
+          - template: tasks/csharp/MsBuild.yml@Pipelines
+            parameters:
+              solution: '$(solutionDirectory)\**\*.sln'
+              buildPlatform: $(buildPlatform)
+              buildConfiguration: $(buildConfiguration)
+              useMsBuild: 'true'
+
+          - template: tasks\csharp\UnitTest.yml@Pipelines
+            parameters:
+              runTest: eq(variables.runTest, true)
+              buildConfiguration: $(buildConfiguration)
+              dotnetTestProjects: $(solutionDirectory)
+              dotnetTestIncludeAssembliesPatternCoverage: $(includeTestAssembliesPattern)
+              dotnetTestExcludeAssembliesPatternCoverage: $(excludeTestAssembliesPattern)
+              dotnetTestCoverletOutputFormat: "cobertura%2copencover"
+              dotnetTestCoverageOutput: $(Build.StagingDirectory)/TestResults/Coverage/
+
+          - template: tasks\general\sonarQubeAnalyzeAndPublish.yml@Pipelines
+            parameters:
+              sonarEnabled: eq(variables.sonarEnabled, true)
+
+          - template: tasks\general\PublishVersion.yml@Pipelines
+            parameters:
+              rootOutputDirectory: $(rootOutputDirectory)
+              outputWithConfiguration: $(outputWithConfiguration)
+              artifactName: $(artifactName)
+

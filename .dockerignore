@@ -1,0 +1,13 @@
+﻿Dockerfile*
+docker-compose*
+.dockerignore
+.git
+docs
+.gitignore
+.vscode
+.gitattributes
+build
+**/obj
+**/bin
+**/.idea
+**/.vs
